@@ -1,9 +1,11 @@
+// src/redux/store/store.js
+
 import {configureStore} from "@reduxjs/toolkit";
-import bugSlice from "../features/bugs/bugSlice.js";
+import bugReducer from "../features/bugs/bugSlice.js";
 
 const store = configureStore({
     reducer:{
-        bugSlice
+        bug:bugReducer,
     }
 });
 

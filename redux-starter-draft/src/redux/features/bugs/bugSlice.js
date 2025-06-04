@@ -42,23 +42,24 @@ const bugSlice = createSlice({
 
     },
 
-    extraReducers: {
+    extraReducers: (builder) => {
+        builder
+            .addCase(postBug.pending, (bug) => {
+                bug.isLoading = true;
+                bug.error = null;
+            })
 
-        [postBug.pending]: (bug) => {
-            bug.isLoading = true;
-            bug.error = null;
-        },
+            .addCase(postBug.fulfilled, (bug, action) => {
+                bug.list.push(action.payload.data);
 
-        [postBug.fulfilled]: (bug, action) => {
-            bug.isLoading = false;
-            bug.list.push(action.payload.data);
-        },
+                bug.isLoading = false;
+                bug.error = null;
+            })
 
-        [postBug.rejected]:(bug , action)=>{
-            bug.isLoading = false;
-            bug.error = action.payload?.error || "some error in post new bug";
-        }
-
+            .addCase(postBug.rejected, (bug, action) =>{
+                bug.isLoading = false;
+                bug.error = action.payload?.error || "error while posting new bug"
+            })
     }
 
 });
