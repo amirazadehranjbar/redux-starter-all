@@ -1,0 +1,356 @@
+// 🟨 src/middleware/apiMiddleware.js
+const axios = require("axios");
+const {apiCallBegan, apiCallSuccess, apiCallFailed} = require("../actions/apiActions");
+
+const apiMiddleware = store => next => async action => {
+    if (action.type !== apiCallBegan.type) return next(action);
+
+    const {url, method, data, onSuccess, onError, onStart} = action.payload;
+
+    if (onStart) store.dispatch({type: onStart});
+
+    next(action);
+
+    try {
+        const response = await axios.request({
+            baseURL: "http://localhost:9001/api",
+            url,
+            method,
+            data
+        });
+
+        // general success
+        store.dispatch(apiCallSuccess(response.data));
+        // select
+        if (onSuccess) store.dispatch({type: onSuccess, payload: response.data});
+
+    } catch (e) {
+        // general errors
+        store.dispatch(apiCallFailed(e.message));
+        // select
+        if (onError) store.dispatch({type: onError, payload: e.message ?? e});
+    }
+};
+
+module.exports = apiMiddleware;
+
+
+
+////////////////////////////////////////////////////////////////////////////////////
+// 🟨 src/app/rootReducer.js
+const {combineReducers} = require("redux");
+const {usersReducer } = require("../features/users/userReducer");
+const {bugReducer} = require("../features/bugs/bugReducer");
+const {projectReducer} = require("../features/projects/projectReducer");
+
+// Combine all feature reducers into a single root reducer
+const RootReducer = combineReducers({
+    bugs: bugReducer,
+    projects: projectReducer,
+    users: usersReducer,
+});
+
+module.exports = { RootReducer };
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// 🟨 src/app/store.js
+const {configureStore} = require("@reduxjs/toolkit");
+const {RootReducer} = require("./rootReducer");
+const logger = require("../middleware/loggerMiddleware");
+const apiMiddleware = require("../middleware/apiMiddleware");
+
+const store = configureStore({
+    reducer: RootReducer,
+    middleware: (getDefaultMiddleware) => {
+        const defaults = getDefaultMiddleware();
+
+        return defaults.concat(logger, apiMiddleware);
+    },
+});
+
+module.exports = {store};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// 🟨 src/features/bugs/bugReducer.js
+const { createSlice } = require("@reduxjs/toolkit");
+
+let id = 0; // local bug ID counter
+
+const bugReducer = createSlice({
+    name: "bugs",
+    initialState: {
+        list:[],
+        isLoading:false,
+        isPosting:false,
+        lastFetch:null
+    },
+    reducers: {
+        // Adds a new bug
+        addBug: (bugs, action) => {
+            bugs.list.push({
+                id: ++id,
+                description: action.payload.description,
+                solved: false
+            });
+        },
+
+        // Intended to remove a bug (but does not mutate state properly)
+        removeBug: (bugs, action) => {
+            bugs.list = bugs.list.filter(bug => bug.id !== action.payload.id);
+        },
+
+        // Updates a bug's solved status
+        updateBug: (bugs, action) => {
+            const bug = bugs.list.find(bug => bug.id === action.payload.id);
+            if (bug) {
+                bug.solved = action.payload.solvedValue;
+            }
+        },
+
+        // api
+        bugRequested: (bugs, action) => {
+            bugs.isLoading = true;
+        },
+        bugReceived: (bugs, action) => {
+            bugs.list = action.payload;
+            bugs.isLoading = false;
+            bugs.lastFetch = Date.now();
+        },
+        bugRequestFailed: (bugs, action) => {
+            bugs.isLoading = false;
+        },
+        bugPostStarted:(bugs , action)=>{
+            bugs.isPosting = true;
+        },
+        bugPostedSuccess:(bugs, action)=>{
+
+        }
+
+    },
+});
+
+module.exports = {
+    bugReducer: bugReducer.reducer,
+    bugActions: bugReducer.actions,
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+// 🟨 src/features/bugs/bugSelectors.js
+const { createSelector } = require("reselect");
+
+// Select the bugs state
+const selectBugs = state => state.bugs;
+
+// Return only unsolved bugs
+const selectUnsolvedBugs = createSelector(
+    [selectBugs],
+    bugs => (bugs.list || []).filter(bug => !bug.solved)
+);
+
+module.exports = {
+    selectUnsolvedBugs,
+};
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// 🟨 src/features/projects/projectReducer.js
+const { createSlice } = require("@reduxjs/toolkit");
+
+let projectID = 0;
+
+const ProjectReducer = createSlice({
+    name: "projects",
+    initialState: [],
+    reducers: {
+        // Add a project with name and default progress
+        addProject: (state, action) => {
+            state.push({
+                id: ++projectID,
+                projectName: action.payload.projectName,
+                progress: 0
+            });
+        },
+    }
+});
+
+module.exports = {
+    projectReducer: ProjectReducer.reducer,
+    projectActions: ProjectReducer.actions,
+};
+//////////////////////////////////////////////////////////////////////////////////////////////
+// 🟨 src/features/projects/projectSelectors.js
+const { createSelector } = require("reselect");
+
+// Select all projects
+const projectState = state => state.projects;
+
+// Return projects that have progress >= 50
+const getProgressed = createSelector(
+    [projectState],
+    projects => projects.filter(project => project.progress >= 50)
+);
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// 🟨 src/features/users/userReducer.js
+const { createSlice } = require("@reduxjs/toolkit");
+
+let userID = 0;
+const initialState = [];
+
+const userReducer = createSlice({
+    name: "users",
+    initialState: initialState,
+    reducers: {
+        // Add a new user
+        userAdd: (users, action) => {
+            users.push({
+                userID: ++userID,
+                userName: action.payload.userName,
+                userUploadedBugsIDs: [], 
+            });
+        },
+
+        // Add a bug to an existing user by ID
+        addBug: (users, action) => {
+            const { userID, bugID } = action.payload; 
+            const user = users.find(user => user.userID === userID);
+            if (user) {
+                user.userUploadedBugsIDs.push(bugID); 
+            }
+        }
+    }
+});
+
+module.exports = {
+    usersReducer: userReducer.reducer,
+    usersActions: userReducer.actions,
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// 🟨 src/features/users/userSelectors.js
+const { createSelector } = require("reselect");
+
+const users = state => state.users;
+const bugs = state => state.bugs;
+
+// Select bugs that were uploaded by a given user
+const getBugsByUser = (targetUserID) => createSelector( 
+    [users, bugs],
+    (allUsers, allBugs) => {
+        const targetUser = allUsers.find(user => user.userID === targetUserID); 
+        if (!targetUser) return [];
+        return allBugs.list.filter(bug => targetUser.userUploadedBugsIDs.includes(bug.id));
+    }
+);
+
+// Return userName by userID
+const getUserNameByID = (targetUserID) => createSelector( 
+    [users],
+    (allUsers) => {
+        const foundedUser = allUsers.find(user => user.userID === targetUserID); 
+        return foundedUser ? foundedUser.userName : "user not found";
+    }
+);
+
+module.exports = {
+    getBugsByUser,
+    getUserNameByID,
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// 🟨 src/middleware/apiMiddleware.js
+const axios = require("axios");
+const {apiCallBegan, apiCallSuccess, apiCallFailed} = require("../actions/apiActions");
+
+const apiMiddleware = store => next => async action => {
+    if (action.type !== apiCallBegan.type) return next(action);
+
+    const {url, method, data, onSuccess, onError, onStart} = action.payload;
+
+    if (onStart) store.dispatch({type: onStart});
+
+    next(action);
+
+    try {
+        const response = await axios.request({
+            baseURL: "http://localhost:9001/api",
+            url,
+            method,
+            data
+        });
+
+        // general success
+        store.dispatch(apiCallSuccess(response.data));
+        // select
+        if (onSuccess) store.dispatch({type: onSuccess, payload: response.data});
+
+    } catch (e) {
+        // general errors
+        store.dispatch(apiCallFailed(e.message));
+        // select
+        if (onError) store.dispatch({type: onError, payload: e.message ?? e});
+    }
+};
+
+module.exports = apiMiddleware;
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// src/index.js
+const { store } = require("./app/store");
+const {loadBugs} = require("./actions/apiActions");
+
+store.dispatch(loadBugs());
+
+console.log(store.getState());
+
+/////////////////////*************************** Backend *********************************////////////////////////////////
+////////////////////////////////////// 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 ///////////////////////////////////////
+// index.js
+const express = require("express");
+const app = express();
+const bodyParser = require("body-parser");
+const cors = require("cors");
+
+app.use(cors());
+app.use(bodyParser.json());
+
+const bugs = [
+  { id: 1, description: "Bug 1", userId: 1, resolved: true },
+  { id: 2, description: "Bug 2", userId: 1 },
+  { id: 3, description: "Bug 3", userId: 2 },
+  { id: 4, description: "Bug 4" }
+];
+
+app.get("/api/bugs", (req, res) => {
+  res.json(bugs);
+});
+
+app.post("/api/bugs", (req, res) => {
+  const bug = { id: Date.now(), resolved: false, ...req.body };
+  bugs.push(bug);
+
+  res.json(bug);
+});
+
+app.patch("/api/bugs/:id", (req, res) => {
+  const index = bugs.findIndex(bug => bug.id === parseInt(req.params.id));
+  const bug = bugs[index];
+  if ("resolved" in req.body) bug.resolved = req.body.resolved;
+  if ("userId" in req.body) bug.userId = req.body.userId;
+
+  res.json(bug);
+});
+
+app.listen(9001, () => {
+  console.log("Node server started on port 9001.");
+});
+
