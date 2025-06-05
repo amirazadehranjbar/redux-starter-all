@@ -1,21 +1,23 @@
-// src/components/form-AddBug.jsx
-import {useState} from "react";
-import {Form, Input, Button} from "@heroui/react";
+import React from "react";
+import { useState } from "react";
+import { Form, Input, Button } from "@heroui/react";
+import { useDispatch } from "react-redux";
+import { postBug } from "../redux/features/bugs/bugSlice.js";
 
-const formAddBug = ()=> {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+const FormAddBug = () => {
     const [action, setAction] = useState(null);
+    const dispatch = useDispatch();
 
     return (
         <Form
-            className="h-1/2 w-1/2 flex flex-col gap-4 mt-10 ml-10 items-center justify-center bg-slate-800 p-4
-            rounded-2xl border-4 border-blue-500"
+            className="w-full max-w-md flex flex-col gap-4 p-6 bg-slate-800 rounded-2xl border-4 border-blue-500"
             onReset={() => setAction("reset")}
             onSubmit={(e) => {
                 e.preventDefault();
                 let data = Object.fromEntries(new FormData(e.currentTarget));
+                data.userID = "683f64e1772825e09a59634d";
 
-                setAction(`submit ${JSON.stringify(data)}`);
+                dispatch(postBug(data));
             }}
         >
             <Input
@@ -28,18 +30,22 @@ const formAddBug = ()=> {
                 type="text"
             />
 
-
             <div className="flex gap-6">
-
-                <Button type="submit" variant="bordered" className="rounded-2xl bg-slate-800 px-8 py-2
-                text-slate-400 border-2 border-blue-500">
-                    Submit
+                <Button
+                    type="submit"
+                    variant="bordered"
+                    className="rounded-2xl bg-slate-800 px-8 py-2 text-slate-400 border-2 border-blue-500"
+                >
+                    add bug
                 </Button>
-                <Button type="reset" className="rounded-2xl bg-slate-800 px-8 py-2
-                text-slate-400 border-2 border-blue-500">
+                <Button
+                    type="reset"
+                    className="rounded-2xl bg-slate-800 px-8 py-2 text-slate-400 border-2 border-blue-500"
+                >
                     Reset
                 </Button>
             </div>
+
             {action && (
                 <div className="text-small text-default-500">
                     Action: <code>{action}</code>
@@ -49,5 +55,4 @@ const formAddBug = ()=> {
     );
 };
 
-export default formAddBug;
-
+export default FormAddBug;

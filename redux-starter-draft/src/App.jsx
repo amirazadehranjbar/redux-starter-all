@@ -1,14 +1,16 @@
 // src/App.jsx
-
+import React from "react";
 import FormAddBug from "./components/form-AddBug.jsx";
+import Layout from "./layout.jsx";
 
 const App = () => {
 
 
     return (
-        <div className="h-screen w-screen bg-slate-400 items-center justify-center contain-content">
+
+        <Layout>
             <FormAddBug></FormAddBug>
-        </div>
+        </Layout>
     )
 }
 

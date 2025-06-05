@@ -4,7 +4,7 @@ import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
 
 // post new bug
-const postBug = createAsyncThunk("bugs/postBug", async (bugData, thunkAPI) => {
+export const postBug = createAsyncThunk("bugs/postBug", async (bugData, thunkAPI) => {
 
     try {
         const response = await axios.post("http://localhost:8000/api/bugs", bugData);
