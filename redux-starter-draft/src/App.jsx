@@ -2,6 +2,7 @@
 import React from "react";
 import FormAddBug from "./components/form-AddBug.jsx";
 import Layout from "./layout.jsx";
+import BugsList from "./components/bugsList.jsx";
 
 const App = () => {
 
@@ -10,6 +11,7 @@ const App = () => {
 
         <Layout>
             <FormAddBug></FormAddBug>
+            <BugsList></BugsList>
         </Layout>
     )
 }

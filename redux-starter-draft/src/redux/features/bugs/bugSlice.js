@@ -3,7 +3,7 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
 
-// post new bug
+// ⭐⭐ post new bug
 export const postBug = createAsyncThunk("bugs/postBug", async (bugData, thunkAPI) => {
 
     try {
@@ -15,7 +15,20 @@ export const postBug = createAsyncThunk("bugs/postBug", async (bugData, thunkAPI
 
 });
 
-// bug Slice
+// ⭐⭐ get all bugs
+export const getAllBugs = createAsyncThunk("bugs/getAllBugs" , async (arg, thunkAPI) =>{
+
+    try {
+        const response = await axios.get("http://localhost:8000/api/bugs");
+        return response.data;
+    } catch (e) {
+        return thunkAPI.rejectWithValue(e);
+    }
+
+
+});
+
+// ⭐⭐ bug Slice
 const bugSlice = createSlice({
 
     name: "bugs",
@@ -44,6 +57,7 @@ const bugSlice = createSlice({
 
     extraReducers: (builder) => {
         builder
+            //region POST new bug
             .addCase(postBug.pending, (bug) => {
                 bug.isLoading = true;
                 bug.error = null;
@@ -60,6 +74,24 @@ const bugSlice = createSlice({
                 bug.isLoading = false;
                 bug.error = action.payload?.error || "error while posting new bug"
             })
+            //endregion
+
+            //region GET all bugs
+            .addCase(getAllBugs.pending , (bug , action)=>{
+                bug.isLoading = true;
+                bug.error = null;
+            })
+
+            .addCase(getAllBugs.fulfilled , (bug , action)=>{
+                bug.isLoading = false;
+                bug.list = action.payload.data;
+            })
+
+            .addCase(getAllBugs.rejected , (bug , action)=>{
+                bug.isLoading = false;
+                bug.error = action.payload?.error || "error while fetching bugs data"
+            })
+            //endregion
     }
 
 });
