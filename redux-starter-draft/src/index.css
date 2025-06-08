@@ -1,1 +1,8 @@
+/*tailwind.config.js*/
 @import "tailwindcss";
+
+*{
+    font-family: "Space Mono",sans-serif;
+}
+
+@custom-variant dark (&:where(.dark , .dark *));
