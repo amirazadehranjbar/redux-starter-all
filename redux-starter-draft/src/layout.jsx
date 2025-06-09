@@ -1,5 +1,6 @@
+// src/layout.jsx
 import React, {useEffect, useState} from "react";
-
+import {Moon,Sun} from "lucide-react";
 
 // eslint-disable-next-line react/prop-types
 const Layout = ({ children }) => {
@@ -25,12 +26,12 @@ const Layout = ({ children }) => {
                 <h1>My App Navbar</h1>
                 <button className="bg-slate-800 px-5 py-2 right-5 fixed top-[calc(100vh/12)/2]
                 rounded-md text-slate-400 font-bold hover:scale-110 cursor-pointer" onClick={setIsDarkHandler}>
-                    {isDark ? "Light" : "Dark"}
+                    {isDark ? <Sun/>: <Moon/>}
                 </button>
 
             </header>
 
-            <main className={`flex-1 flex items-center justify-center p-6 ${isDark ? 'bg-gray-800 text-slate-400' : 'bg-slate-100'}`}>
+            <main className="flex-1 flex flex-col items-center justify-center p-6 bg-slate-100 dark:bg-gray-800 dark:text-slate-400 ">
                 {children}
             </main>
 
