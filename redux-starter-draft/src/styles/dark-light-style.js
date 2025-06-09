@@ -1,8 +1,8 @@
 // src/styles/dark-light-style.js
 
 export const buttonStyle = {
-    light: "cursor-pointer hover:scale-110 transition duration-300 rounded-md px-5 py-3 bg-slate-800 text-slate-400 border-1 border-blue-500",
-    dark:  "cursor-pointer hover:scale-110 transition duration-300 rounded-md px-5 py-3 bg-slate-900 text-slate-200 border-1 border-blue-500"
+    light: "cursor-pointer hover:scale-110 transition duration-300 rounded-md px-5 py-3 bg-slate-400 text-slate-600  border-1 border-blue-500 flex flex-row items-center justify-center",
+    dark:  "cursor-pointer hover:scale-110 transition duration-300 rounded-md px-5 py-3 bg-slate-900 text-slate-200  border-1 border-blue-500 flex flex-row items-center justify-center"
 };
 
 export const formStyle = {
@@ -11,8 +11,8 @@ export const formStyle = {
 };
 
 export const headerStyle = {
-    light:"bg-slate-300 text-slate-900 font-bold p-4 flex flex-row h-[calc(100vh/12)]",
-    dark: "bg-slate-900 text-slate-300 font-bold p-4 flex flex-row h-[calc(100vh/12)]"
+    light:"bg-slate-300 text-slate-900 font-bold p-4 flex flex-row h-[calc(100vh/12)] space-x-5",
+    dark: "bg-slate-900 text-slate-300 font-bold p-4 flex flex-row h-[calc(100vh/12)] space-x-5"
 };
 
 export const mainStyle = {

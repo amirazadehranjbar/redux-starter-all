@@ -20,7 +20,7 @@ root.render(
             <React.StrictMode>
                 <Header/>
                 <Routes>
-                    <Route path="/" element={<BugsComponent/>}/>
+                    <Route path="/bug" element={<BugsComponent/>}/>
                     <Route path="/user" element={<UserComponent/>}/>
                 </Routes>
                 <Footer/>

@@ -2,8 +2,8 @@ import React from "react";
 import { useState } from "react";
 import { Form, Input, Button } from "@heroui/react";
 import {useDispatch, useSelector} from "react-redux";
-import { postBug } from "../redux/features/bugs/bugSlice.js";
-import {buttonStyle, formStyle} from "../styles/dark-light-style.js";
+import { postBug } from "../../redux/features/bugs/bugSlice.js";
+import {buttonStyle, formStyle} from "../../styles/dark-light-style.js";
 
 const FormAddBug = () => {
     const [action, setAction] = useState(null);
