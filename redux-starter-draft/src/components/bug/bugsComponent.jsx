@@ -1,7 +1,7 @@
 import React from 'react'
-import {mainStyle} from "../styles/dark-light-style.js";
+import {mainStyle} from "../../styles/dark-light-style.js";
 import {useSelector} from "react-redux";
-import FormAddBug from "./form-AddBug.jsx";
+import FormAddBug from "../form-AddBug.jsx";
 import BugsList from "./bugsList.jsx";
 
 

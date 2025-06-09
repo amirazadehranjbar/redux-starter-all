@@ -1,7 +1,7 @@
 // src/components/bugsList.jsx
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllBugs} from "../redux/features/bugs/bugSlice.js";
+import {getAllBugs} from "../../redux/features/bugs/bugSlice.js";
 
 
 const BugsList = () => {
