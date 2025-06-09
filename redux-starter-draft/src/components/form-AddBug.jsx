@@ -1,16 +1,18 @@
 import React from "react";
 import { useState } from "react";
 import { Form, Input, Button } from "@heroui/react";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import { postBug } from "../redux/features/bugs/bugSlice.js";
+import {buttonStyle, formStyle} from "../styles/dark-light-style.js";
 
 const FormAddBug = () => {
     const [action, setAction] = useState(null);
+    const isDark = useSelector(state => state.darkMode.isDark);
     const dispatch = useDispatch();
 
     return (
         <Form
-            className="w-full max-w-md flex flex-col gap-4 p-6 dark:bg-slate-800 rounded-2xl border-4 dark:border-blue-500"
+            className={isDark ? formStyle.dark : formStyle.light}
             onReset={() => setAction("reset")}
             onSubmit={(e) => {
                 e.preventDefault();
@@ -20,27 +22,29 @@ const FormAddBug = () => {
                 dispatch(postBug(data));
             }}
         >
+            <label>
+                bugDescription
+            </label>
             <Input
                 isRequired
                 errorMessage="Please enter your bug description"
-                label="bugDescription"
-                labelPlacement="outside"
                 name="bugDescription"
                 placeholder="Enter your bug description"
                 type="text"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
 
             <div className="flex gap-6">
                 <Button
                     type="submit"
                     variant="bordered"
-                    className="rounded-2xl dark:bg-slate-800 px-8 py-2 text-slate-400 border-2 dark:border-blue-500"
+                    className={isDark ? buttonStyle.dark : buttonStyle.light}
                 >
                     add bug
                 </Button>
                 <Button
                     type="reset"
-                    className="rounded-2xl bg-slate-800 px-8 py-2 text-slate-400 border-2 border-blue-500"
+                    className={isDark ? buttonStyle.dark : buttonStyle.light}
                 >
                     Reset
                 </Button>

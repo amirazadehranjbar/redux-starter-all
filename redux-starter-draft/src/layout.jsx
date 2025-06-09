@@ -1,15 +1,16 @@
 // src/layout.jsx
 import React, {useEffect, useState} from "react";
 import {Moon,Sun} from "lucide-react";
+import {useDispatch, useSelector} from "react-redux";
+import {toggleMode} from "./redux/features/dark/darkSlice.js";
+import {footerStyle, headerStyle, mainStyle} from "./styles/dark-light-style.js";
+
 
 // eslint-disable-next-line react/prop-types
 const Layout = ({ children }) => {
 
-    const [isDark , setIsDark] = useState(false);
-
-    const setIsDarkHandler = ()=>{
-        setIsDark(!isDark);
-    }
+    const dispatch = useDispatch();
+    const isDark = useSelector(state => state.darkMode.isDark);
 
     useEffect(() => {
 
@@ -22,20 +23,20 @@ const Layout = ({ children }) => {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <header className="bg-slate-400 dark:bg-slate-900 text-white p-4 flex flex-row h-[calc(100vh/12)]">
+            <header className={isDark ? headerStyle.dark : headerStyle.light}>
                 <h1>My App Navbar</h1>
                 <button className="bg-slate-800 px-5 py-2 right-5 fixed top-[calc(100vh/12)/2]
-                rounded-md text-slate-400 font-bold hover:scale-110 cursor-pointer" onClick={setIsDarkHandler}>
+                rounded-md text-slate-400 font-bold hover:scale-110 cursor-pointer" onClick={() => dispatch(toggleMode())}>
                     {isDark ? <Sun/>: <Moon/>}
                 </button>
 
             </header>
 
-            <main className="flex-1 flex flex-col items-center justify-center p-6 bg-slate-100 dark:bg-gray-800 dark:text-slate-400 ">
+            <main className={isDark ? mainStyle.dark : mainStyle.light}>
                 {children}
             </main>
 
-            <footer className="bg-slate-400 dark:bg-slate-900 text-white p-4 text-center">
+            <footer className={isDark ? footerStyle.dark : footerStyle.light}>
                 © 2025 My App
             </footer>
         </div>
