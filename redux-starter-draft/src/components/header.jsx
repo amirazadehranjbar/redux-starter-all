@@ -1,3 +1,4 @@
+// src/components/header.jsx
 import React, {useEffect} from 'react'
 import {buttonStyle, headerStyle} from "../styles/dark-light-style.js";
 import {toggleMode} from "../redux/features/dark/darkSlice.js";

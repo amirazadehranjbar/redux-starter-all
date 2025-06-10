@@ -1,18 +1,28 @@
-import React, {useState} from 'react'
+// src/components/user/userComponent.jsx
+import React, {useEffect, useState} from 'react'
 import {useDispatch, useSelector} from "react-redux";
 import {Button, Form, Input} from "@heroui/react";
 import {buttonStyle, formStyle, mainStyle} from "../../styles/dark-light-style.js";
-import {postNewUser} from "../../redux/features/user/userSlice.js";
+import {getAllUsers, postNewUser} from "../../redux/features/user/userSlice.js";
 
 
 const UserComponent = () => {
 
     const [action, setAction] = useState(null);
     const isDark = useSelector(state => state.darkMode.isDark);
+    const users = useSelector(state => state.user.usersList);
     const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        dispatch(getAllUsers());
+    }, [dispatch]);
+
+
     return (
         <div className="h-[calc(100vh-125px)] w-screen flex flex-col">
             <main className={isDark ? mainStyle.dark : mainStyle.light}>
+                {/*region add new user form*/}
                 <Form
                     className={isDark ? formStyle.dark : formStyle.light}
                     onReset={() => setAction("reset")}
@@ -62,6 +72,14 @@ const UserComponent = () => {
                         </Button>
                     </div>
                 </Form>
+                {/*endregion*/}
+                <div className="flex flex-col items-center justify-center">
+                    {users.length > 0 ?
+                        (
+                            users.map((user,index)=>(<div key={index}><p>{user.userName}</p></div>))
+                        )
+                        : (<div>users not found !</div>)}
+                </div>
             </main>
         </div>
 

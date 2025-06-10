@@ -1,3 +1,4 @@
+// src/components/bug/bugsComponent.jsx
 import React from 'react'
 import {mainStyle} from "../../styles/dark-light-style.js";
 import {useSelector} from "react-redux";

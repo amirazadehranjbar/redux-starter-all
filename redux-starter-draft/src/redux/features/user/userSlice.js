@@ -1,3 +1,5 @@
+// src/redux/features/user/userSlice.js
+
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -68,7 +70,7 @@ const userSlice = createSlice({
         })
 
         .addCase(getAllUsers.fulfilled , (users , action)=>{
-            users.list = action.payload.data;
+            users.usersList = action.payload.data;
             users.isLoading=false;
         })
 

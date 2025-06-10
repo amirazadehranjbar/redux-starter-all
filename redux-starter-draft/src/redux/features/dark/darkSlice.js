@@ -1,9 +1,10 @@
+// src/redux/features/dark/darkSlice.js
 import {createSlice} from "@reduxjs/toolkit";
 
 const DarkReducer= createSlice({
     name:"dark-light",
     initialState:{
-        isDark:false
+        isDark:true
     },
     reducers:{
         toggleMode:(state)=>{

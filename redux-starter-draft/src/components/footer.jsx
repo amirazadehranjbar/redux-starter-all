@@ -1,3 +1,4 @@
+// src/components/footer.jsx
 import React from 'react'
 import {footerStyle} from "../styles/dark-light-style.js";
 import {useSelector} from "react-redux";
