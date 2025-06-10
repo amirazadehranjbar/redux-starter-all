@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import {useDispatch, useSelector} from "react-redux";
 import {Button, Form, Input} from "@heroui/react";
 import {buttonStyle, formStyle, mainStyle} from "../../styles/dark-light-style.js";
+import {postNewUser} from "../../redux/features/user/userSlice.js";
 
 
 const UserComponent = () => {
@@ -18,6 +19,7 @@ const UserComponent = () => {
                     onSubmit={(e) => {
                         e.preventDefault();
                         let data = Object.fromEntries(new FormData(e.currentTarget));
+                        dispatch(postNewUser(data));
                     }}
                 >
                     <label>
