@@ -53,7 +53,7 @@ const userSlice = createSlice({
         })
 
         .addCase(postNewUser.fulfilled , (users, action)=>{
-            users.usersList.push(action.payload.newUser);
+            users.usersList.push(action.payload.data);
             users.isPosting=false;
             users.isLoggedIn = true;
         })

@@ -26,10 +26,10 @@ const UserComponent = () => {
                 <Form
                     className={isDark ? formStyle.dark : formStyle.light}
                     onReset={() => setAction("reset")}
-                    onSubmit={(e) => {
+                    onSubmit={async (e) => {
                         e.preventDefault();
-                        let data = Object.fromEntries(new FormData(e.currentTarget));
-                        dispatch(postNewUser(data));
+                        const data = Object.fromEntries(new FormData(e.currentTarget));
+                        await dispatch(postNewUser(data));
                     }}
                 >
                     <label>
